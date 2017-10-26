@@ -122,7 +122,7 @@ def collect_followers_of_followers():
 	append_to_db(users)
 
 def follow_users():
-	users = db['users_to_follow'].find({})
+	users = db['users_to_follow'].find({}, no_cursor_timeout=True)
 	count = 0
 	for user in users:
 		try:
@@ -148,6 +148,7 @@ def follow_users():
 			elif count%10==0:
 				print("Sleeping 250 seconds")
 				time.sleep(250)
+	users.close()
 
 if __name__ == '__main__':
 	try:
