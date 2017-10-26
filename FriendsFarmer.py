@@ -127,6 +127,7 @@ def follow_users():
 	for user in users:
 		try:
 			twitter.create_friendship(screen_name=user['username'],follow=True)
+			print("Followed " + user['username'])
 			count += 1
 		except Exception as e:
 			print("Can't follow " + user['username'])
@@ -135,10 +136,17 @@ def follow_users():
 			break
 		finally:
 			db['users_to_follow'].remove({'_id':user['_id']})
-			if count%100==0:
-				time.sleep(600)
+			if count%950==0:
+				return
+			elif count%100==0:
+				print("Sleeping 1000 seconds")
+				time.sleep(1000)
+			elif count%50==0:
+				print("Sleeping 500 seconds")
+				time.sleep(500)
 			elif count%10==0:
-				time.sleep(120)
+				print("Sleeping 250 seconds")
+				time.sleep(250)
 
 if __name__ == '__main__':
 	try:
