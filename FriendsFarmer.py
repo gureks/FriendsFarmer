@@ -133,10 +133,11 @@ def follow_users():
 			print("Can't follow " + user['username'])
 			continue
 		else:
-			break
+			continue
 		finally:
 			db['users_to_follow'].remove({'_id':user['_id']})
 			if count%950==0:
+				print("Returning...")
 				return
 			elif count%100==0:
 				print("Sleeping 1000 seconds")
