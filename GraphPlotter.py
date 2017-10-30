@@ -30,11 +30,13 @@ usr = user_to_collect
 followers = []
 for page in tweepy.Cursor(api.followers, screen_name=usr).pages():
 	for user in page:
+		print("Follower - " + user.screen_name)
 		followers.append(user.screen_name)
 
 following = []
 for page in tweepy.Cursor(api.friends, screen_name=usr).pages():
 	for user in page:
+                print("Following - " + user.screen_name)
 		following.append(user.screen_name)
 
 u = [usr]
@@ -69,6 +71,7 @@ while tweets:
 			rt_count += tweet.retweet_count
 		fv_count += tweet.favorite_count
 	last_id = tweets[len(tweets)-1].id - 1
+	print("Last ID - " + last_id)
 	tweets = api.user_timeline(screen_name = usr, count=200, max_id = last_id)
 
 client = MongoClient()
