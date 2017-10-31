@@ -5,6 +5,11 @@ from pymongo import MongoClient
 from environment import api_key, user_to_collect
 import datetime
 
+'''
+	TODO : Fix line #99 and #120
+	TODO : Add datetime to requirements.txt
+'''
+
 connection = MongoClient()
 db = connection['FriendsFarmer']
 
