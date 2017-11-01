@@ -1,8 +1,8 @@
-import string, pymongo, os, time
+import string, pymongo, os, time, pytz
 from twython import Twython
 from collections import Counter
 from pymongo import MongoClient
-from environment import api_key, user_to_collect
+from environment import api_key, user_to_collect, threshold_for_inout_ratio
 from datetime import datetime
 
 '''
@@ -39,7 +39,7 @@ def collect_followers():
 													skip_status=True,
 													include_user_entities=False,
 													cursor=cursor)
-		for follower in followers_list:
+		for follower in followers_list['users']:
 			followers.append({
 				'username':	follower['screen_name'],
 				'_id': follower['id_str']
@@ -67,7 +67,7 @@ def collect_following():
 													include_user_entities=False,
 													cursor=cursor)
 
-		for friend in friends_list:
+		for friend in friends_list['users']:
 			following.append({
 				'username':	friend['screen_name'],
 				'_id': friend['id_str']
@@ -107,27 +107,34 @@ def friends_to_unfollow():
 		else:
 			result = twitter.show_user(screen_name=user_name, include_entities=True)
 
+			if not result['statuses_count']:
+				print (user_name + " added to unfollowing list cause of inactivity.")
+				unfollow.append({
+					'_id': friend['_id'],
+					'username':	friend['username']
+				})
+				c += 1
+				continue
+
 			latest_tweet = result['status']['created_at']
 			latest_tweet_dt = datetime.strptime(latest_tweet, "%a %b %d %X %z %Y")
 
 			num_friends = result['friends_count']
 			num_followers = result['followers_count']
-			# To be changed
-			threshold_for_inout_ratio = 10
 
 			# Check if the last tweet is done before threshold last date
-			if latest_tweet_dt < last_date:
-				print (user_name + " added to unfollowing list since his last tweet was done at" + str(latest_tweet_dt.date()))
+			if latest_tweet_dt < last_date.replace(tzinfo=pytz.UTC):
+				print (user_name + " added to unfollowing list since his last tweet was done at " + str(latest_tweet_dt.date()))
 				unfollow.append({
-					'_id': friend['_id']
-					'username':	friend['username'],
+					'_id': friend['_id'],
+					'username':	friend['username']
 				})
 
-			elif float(num_followers)/num_friends > threshold_for_inout_ratio:
-				print (user_name + " added to unfollowing list since his in/out ratio was " +str(float(num_followers)/num_friends))
+			elif float(num_followers)/(num_friends+1) > threshold_for_inout_ratio:
+				print (user_name + " added to unfollowing list since his in/out ratio was " +str(float(num_followers)/(num_friends+1)))
 				unfollow.append({
-					'_id': friend['_id']
-					'username':	friend['username'],
+					'_id': friend['_id'],
+					'username':	friend['username']
 				})
 
 			c += 1
