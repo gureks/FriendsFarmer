@@ -21,23 +21,11 @@ twitter = Twython(
 	api_key['access_token_secret']
 )
 
-def append_to_db(users):
+def append_to_db(users, name):
 	# Add to database
 	for i in users:
-		db['users_to_unfollow'].update({'_id':i['_id']}, i, True)
-	print(db['users_to_unfollow'].count({}))
-
-def append_followers_to_db(users):
-	# Add to database
-	for i in users:
-		db['followers'].update({'_id':i['_id']}, i, True)
-	print(db['followers'].count({}))
-
-def append_following_to_db(users):
-	# Add to database
-	for i in users:
-		db['following'].update({'_id':i['_id']}, i, True)
-	print(db['following'].count({}))
+		db[name].update({'_id':i['_id']}, i, True)
+	print(db[name].count({}))
 
 def collect_followers():
 	followers = list()
@@ -65,10 +53,10 @@ def collect_followers():
 			time.sleep(900)
 
 	print ("Collected all " + str(len(followers)) + " followers. Storing them in the db")
-	append_followers_to_db(followers)
+	append_followers_to_db(followers, 'followers')
 
 def collect_following_to_unfollow():
-	following = list()	
+	following = list()
 	ctr = 0
 	# Store all friends in a db
 	while cursor!=0:
@@ -77,7 +65,7 @@ def collect_following_to_unfollow():
 													skip_status=True,
 													include_user_entities=False,
 													cursor=cursor)
-		
+
 		for friends in friends_list:
 			following.append({
 				'username':	follower['screen_name'],
@@ -92,7 +80,7 @@ def collect_following_to_unfollow():
 			time.sleep(900)
 
 	print ("Collected all " + str(len(following)) + " friends. Storing them in the db")
-	append_following_to_db(following)
+	append_following_to_db(following, 'following')
 
 def friends_to_unfollow():
 	following = db['following'].find({}, no_cursor_timeout=True)
@@ -128,7 +116,7 @@ def friends_to_unfollow():
 			# Check if the last tweet is done before threshold last date
 			if latest_tweet_dt < last_date:
 				print (username + " added to unfollowing list since his last tweet was done at" + str(latest_tweet_dt))
-				
+
 				unfollow.append({
 				'username':	friend['username'],
 				'_id': friend['_id']
