@@ -105,7 +105,7 @@ def friends_to_unfollow():
 		if user_name in followers_usernames:
  			continue
 		else:
-			result = twitter.show_user(screen_name=user_name, include_entities=True)
+			result = twitter.show_user(screen_name=user_name, user_id=friend['_id'], include_entities=True)
 
 			if not result['statuses_count']:
 				print (user_name + " added to unfollowing list cause of inactivity.")
