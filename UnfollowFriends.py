@@ -101,11 +101,21 @@ def friends_to_unfollow():
 	c = 0
 	for friend in following:
 		user_name = friend['username']
+		print(user_name)
 		# Check if someone we follow don't follow us back
 		if user_name in followers_usernames:
  			continue
 		else:
-			result = twitter.show_user(screen_name=user_name, user_id=friend['_id'], include_entities=True)
+			result = twitter.show_user(user_id=friend['_id'], include_entities=True)
+
+			if result['protected']:
+				print("Private User - " + follower['screen_name'])
+				unfollow.append({
+					'_id': friend['_id'],
+					'username':	friend['username']
+				})
+				c += 1
+				continue
 
 			if not result['statuses_count']:
 				print (user_name + " added to unfollowing list cause of inactivity.")
