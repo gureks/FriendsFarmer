@@ -109,7 +109,7 @@ def friends_to_unfollow():
 			result = twitter.show_user(user_id=friend['_id'], include_entities=True)
 
 			if result['protected']:
-				print("Private User - " + follower['screen_name'])
+				print("Private User - " + user_name)
 				unfollow.append({
 					'_id': friend['_id'],
 					'username':	friend['username']
@@ -118,6 +118,15 @@ def friends_to_unfollow():
 				continue
 
 			if not result['statuses_count']:
+				print (user_name + " added to unfollowing list cause of inactivity.")
+				unfollow.append({
+					'_id': friend['_id'],
+					'username':	friend['username']
+				})
+				c += 1
+				continue
+
+			if 'status' not in result.keys():
 				print (user_name + " added to unfollowing list cause of inactivity.")
 				unfollow.append({
 					'_id': friend['_id'],
