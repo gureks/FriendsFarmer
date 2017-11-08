@@ -152,14 +152,17 @@ def follow_filter():
 		if user_name in followers_usernames:
  			continue
 		else:
+			if c%850==0:
+				print ("Sleeping for 1000 seconds")
+				time.sleep(1000)
 			try:
 				result = twitter.show_user(user_id=user['_id'], include_entities=True)
+				c+=1
 			except Exception as e:
 				print(e)
 				if e == 'Twitter API returned a 404 (Not Found), User not found.':
-					print (user_name + " added to unfollowing list cause of inactivity.")
+					print (user_name + e)
 					remove.append(user['_id'])
-					c += 1
 				continue
 			else:
 				continue
@@ -169,19 +172,16 @@ def follow_filter():
 			if result['protected']:
 				print("Private User - " + user_name)
 				remove.append(user['_id'])
-				c += 1
 				continue
 
 			if not result['statuses_count']:
 				print (user_name + " added to unfollowing list cause of inactivity.")
 				remove.append(user['_id'])
-				c += 1
 				continue
 
 			if 'status' not in result.keys():
 				print (user_name + " added to unfollowing list cause of inactivity.")
 				remove.append(user['_id'])
-				c += 1
 				continue
 
 			latest_tweet = result['status']['created_at']
@@ -199,10 +199,6 @@ def follow_filter():
 				print (user_name + " added to unfollowing list since his in/out ratio was " +str(float(num_followers)/(num_friends+1)))
 				remove.append(user['_id'])
 
-			c += 1
-			if c%850==0:
-				print ("Sleeping for 1000 seconds")
-				time.sleep(1000)
 	remove_from_db(remove, 'users_to_follow')
 
 def follow_users():
