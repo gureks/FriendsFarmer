@@ -150,7 +150,19 @@ def follow_filter():
 		if user_name in followers_usernames:
  			continue
 		else:
-			result = twitter.show_user(user_id=user['_id'], include_entities=True)
+			try:
+				result = twitter.show_user(user_id=user['_id'], include_entities=True)
+			except Exception as e:
+				print(e)
+				if e == 'Twitter API returned a 404 (Not Found), User not found.':
+					print (user_name + " added to unfollowing list cause of inactivity.")
+					remove.append(user['_id'])
+					c += 1
+				continue
+			else:
+				continue
+			finally:
+				pass
 
 			if result['protected']:
 				print("Private User - " + user_name)
@@ -186,7 +198,7 @@ def follow_filter():
 				remove.append(user['_id'])
 
 			c += 1
-			if c%900==0:
+			if c%850==0:
 				print ("Sleeping for 1000 seconds")
 				time.sleep(1000)
 	remove_from_db(remove, 'users_to_follow')
