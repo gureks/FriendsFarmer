@@ -153,16 +153,15 @@ def follow_filter():
  			continue
 		else:
 			if c%850==0:
+				remove_from_db(remove, 'users_to_follow')
 				print ("Sleeping for 1000 seconds")
 				time.sleep(1000)
 			try:
 				result = twitter.show_user(user_id=user['_id'], include_entities=True)
 				c+=1
 			except Exception as e:
-				print(e)
-				if e == 'Twitter API returned a 404 (Not Found), User not found.':
-					print (user_name + e)
-					remove.append(user['_id'])
+				print (user_name + e)
+				remove.append(user['_id'])
 				continue
 			else:
 				continue
