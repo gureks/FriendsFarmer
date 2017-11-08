@@ -153,6 +153,7 @@ def follow_filter():
  			continue
 		else:
 			if c%850==0:
+				remove_from_db(remove, 'users_to_follow')
 				print ("Sleeping for 1000 seconds")
 				time.sleep(1000)
 			try:
