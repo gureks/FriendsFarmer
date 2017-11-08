@@ -31,9 +31,9 @@ def append_to_db(users):
 
 def remove_from_db(users, collection):
 	# Remove from database
-	print("Initial " + collection + "size: " + str(db[collection].count({})))
+	print("Initial " + collection + " size: " + str(db[collection].count({})))
 	for i in users:
-		db[collection].remove({'_id':i['_id']})
+		db[collection].remove({'_id':i})
 	print("Updated " + collection + "size: " + str(db[collection].count({})))
 
 def collect_similar_interests():
@@ -160,7 +160,7 @@ def follow_filter():
 				result = twitter.show_user(user_id=user['_id'], include_entities=True)
 				c+=1
 			except Exception as e:
-				print (user_name + e)
+				print (user_name + str(e))
 				remove.append(user['_id'])
 				continue
 			else:
