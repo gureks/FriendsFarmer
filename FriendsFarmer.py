@@ -1,8 +1,9 @@
-import string, pymongo, os, time
+import string, pymongo, os, time, pytz
 from twython import Twython
 from collections import Counter
 from pymongo import MongoClient
-from environment import api_key, user_to_collect
+from environment import api_key, user_to_collect, threshold_for_inout_ratio
+from datetime import datetime
 
 '''
 	TODO : Fix Most_common. Adjust according to rate limit.
@@ -118,6 +119,7 @@ def collect_followers_of_followers():
 		ctr += 1
 		# TODO : Fix get_followers_list[2]. Adjust according to rate limit.
 		if ctr%15 == 0:
+			print("Sleeping 1000...")
 			time.sleep(1000)
 		followers_of_follower.extend(followers_list['users'])
 		print(follower['screen_name'] + " - " + str(len(followers_of_follower)) + " - " + str(ctr))
