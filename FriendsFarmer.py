@@ -144,7 +144,7 @@ def follow_filter():
 	for follower in followers:
 		followers_usernames.append(follower['username'])
 
-	c = 0
+	c = 1
 	for user in users_to_follow:
 		user_name = user['username']
 		print(user_name)
