@@ -1,6 +1,6 @@
-import string, pymongo, os, time, pytz
+import pytz
+import time
 from twython import Twython
-from collections import Counter
 from pymongo import MongoClient
 from environment import api_key, user_to_collect, threshold_for_inout_ratio
 from datetime import datetime
@@ -49,10 +49,10 @@ def collect_followers():
 
 		ctr += 1
 		if ctr%15==0:
-			print ("Sleeping for 900 seconds")
+			print ('Sleeping for 900 seconds')
 			time.sleep(900)
 
-	print ("Collected all " + str(len(followers)) + " followers. Storing them in the db")
+	print ('Collected all ' + str(len(followers)) + ' followers. Storing them in the db')
 	append_to_db(followers, 'followers')
 
 def collect_following():
@@ -77,10 +77,10 @@ def collect_following():
 
 		ctr += 1
 		if ctr%15==0:
-			print ("Sleeping for 900 seconds")
+			print ('Sleeping for 900 seconds')
 			time.sleep(900)
 
-	print ("Collected all " + str(len(following)) + " friends. Storing them in the db")
+	print ('Collected all ' + str(len(following)) + ' friends. Storing them in the db')
 	append_to_db(following, 'following')
 
 def friends_to_unfollow():
@@ -104,12 +104,12 @@ def friends_to_unfollow():
 		print(user_name)
 		# Check if someone we follow don't follow us back
 		if user_name in followers_usernames:
- 			continue
+			continue
 		else:
 			result = twitter.show_user(user_id=friend['_id'], include_entities=True)
 
 			if result['protected']:
-				print("Private User - " + user_name)
+				print('Private User - ' + user_name)
 				unfollow.append({
 					'_id': friend['_id'],
 					'username':	friend['username']
@@ -118,7 +118,7 @@ def friends_to_unfollow():
 				continue
 
 			if not result['statuses_count']:
-				print (user_name + " added to unfollowing list cause of inactivity.")
+				print (user_name + ' added to unfollowing list cause of inactivity.')
 				unfollow.append({
 					'_id': friend['_id'],
 					'username':	friend['username']
@@ -127,7 +127,7 @@ def friends_to_unfollow():
 				continue
 
 			if 'status' not in result.keys():
-				print (user_name + " added to unfollowing list cause of inactivity.")
+				print (user_name + ' added to unfollowing list cause of inactivity.')
 				unfollow.append({
 					'_id': friend['_id'],
 					'username':	friend['username']
@@ -136,21 +136,21 @@ def friends_to_unfollow():
 				continue
 
 			latest_tweet = result['status']['created_at']
-			latest_tweet_dt = datetime.strptime(latest_tweet, "%a %b %d %X %z %Y")
+			latest_tweet_dt = datetime.strptime(latest_tweet, '%a %b %d %X %z %Y')
 
 			num_friends = result['friends_count']
 			num_followers = result['followers_count']
 
 			# Check if the last tweet is done before threshold last date
 			if latest_tweet_dt < last_date.replace(tzinfo=pytz.UTC):
-				print (user_name + " added to unfollowing list since his last tweet was done at " + str(latest_tweet_dt.date()))
+				print (user_name + ' added to unfollowing list since his last tweet was done at ' + str(latest_tweet_dt.date()))
 				unfollow.append({
 					'_id': friend['_id'],
 					'username':	friend['username']
 				})
 
 			elif float(num_followers)/(num_friends+1) > threshold_for_inout_ratio:
-				print (user_name + " added to unfollowing list since his in/out ratio was " +str(float(num_followers)/(num_friends+1)))
+				print (user_name + ' added to unfollowing list since his in/out ratio was ' +str(float(num_followers)/(num_friends+1)))
 				unfollow.append({
 					'_id': friend['_id'],
 					'username':	friend['username']
@@ -158,7 +158,7 @@ def friends_to_unfollow():
 
 			c += 1
 			if c%900==0:
-				print ("Sleeping for 1000 seconds")
+				print ('Sleeping for 1000 seconds')
 				time.sleep(1000)
 	append_to_db(unfollow, 'users_to_unfollow')
 
@@ -168,7 +168,7 @@ def unfollow_users():
 	for user in users:
 		try:
 			twitter.destroy_friendship(screen_name=user['username'])
-			print("Unfollowed " + user['username'])
+			print('Unfollowed ' + user['username'])
 			count += 1
 		except Exception as e:
 			print("Can't unfollow " + user['username'])
@@ -179,31 +179,31 @@ def unfollow_users():
 			db['users_to_unfollow'].remove({'_id':user['_id']})
 			db['following'].remove({'_id':user['_id']})
 			if count%100==0:
-				print("Sleeping 1000 seconds")
+				print('Sleeping 1000 seconds')
 				time.sleep(1000)
 			elif count%50==0:
-				print("Sleeping 500 seconds")
+				print('Sleeping 500 seconds')
 				time.sleep(500)
 			elif count%10==0:
-				print("Sleeping 250 seconds")
+				print('Sleeping 250 seconds')
 				time.sleep(250)
 	users.close()
 
 if __name__ == '__main__':
 	try:
 		collect_followers()
-		print("Followers collected... Sleeping 1000 seconds")
+		print('Followers collected... Sleeping 1000 seconds')
 		time.sleep(1000)
 		collect_following()
-		print("Following collected... Sleeping 1000 seconds")
+		print('Following collected... Sleeping 1000 seconds')
 		time.sleep(1000)
 		friends_to_unfollow()
-		print("Filter applied... Sleeping 1000 seconds")
+		print('Filter applied... Sleeping 1000 seconds')
 		time.sleep(1000)
 		unfollow_users()
-		print("Unfollowed... Exiting...")
+		print('Unfollowed... Exiting...')
 	except Exception as e:
 		print(e)
 		time.sleep(1000)
 		unfollow_users()
-		print("Unfollowed... Exiting...")
+		print('Unfollowed... Exiting...')
