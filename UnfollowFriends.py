@@ -91,7 +91,7 @@ def friends_to_unfollow():
 
 	month = {'Jan' : 1, 'Feb' : 2, 'Mar' : 3, 'Apr' : 4, 'May' : 5, 'Jun' : 6, 'Jul' : 7, 'Aug' : 8, 'Sep' : 9, 'Oct' : 10, 'Nov' : 11, 'Dec' : 12}
 	# To be changed
-	last_date = datetime(2017, 1, 1, 00, 00, 00)
+	last_date = datetime(2017, 5, 1, 00, 00, 00)
 
 	# Code pasand nahi aaya
 	followers_usernames = []
@@ -192,16 +192,18 @@ def unfollow_users():
 if __name__ == '__main__':
 	try:
 		collect_followers()
-		print("Sleeping 1000 seconds")
+		print("Followers collected... Sleeping 1000 seconds")
 		time.sleep(1000)
 		collect_following()
-		print("Sleeping 1000 seconds")
+		print("Following collected... Sleeping 1000 seconds")
 		time.sleep(1000)
 		friends_to_unfollow()
-		print("Sleeping 1000 seconds")
+		print("Filter applied... Sleeping 1000 seconds")
 		time.sleep(1000)
 		unfollow_users()
+		print("Unfollowed... Exiting...")
 	except Exception as e:
 		print(e)
 		time.sleep(1000)
 		unfollow_users()
+		print("Unfollowed... Exiting...")

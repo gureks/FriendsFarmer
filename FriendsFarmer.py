@@ -164,7 +164,7 @@ def follow_filter():
 				remove.append(user['_id'])
 				continue
 			else:
-				continue
+				pass
 			finally:
 				pass
 
