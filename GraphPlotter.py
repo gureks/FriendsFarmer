@@ -12,11 +12,6 @@ def plotLine(keys, values, x, xlabel, ylabel, title, filename, rotation = 0):
 	plt.title(title)
 	plt.savefig("graphs/" + filename)
 
-# CONSUMER_KEY = 'EIDeo5t9tyKO01Cs4xV0bdvnR'
-# CONSUMER_SECRET =  'rUKtUAaYtTH1iCgfqJenglLk3gg1rHjb2k1jMZXr6XL6SIUzwU'
-# ACCESS_TOKEN = '1544789976-GPkfyjaeNh9G1i4hZX70KLOmZpkfwGNCsd8ty3V'
-# ACCESS_SECRET	= 'b8zJPp6eQkq1oaJyb60cdb1Hx5H88vk0ifSifEZkwn4uY'
-
 auth = tweepy.OAuthHandler(api_key['api_key'], api_key['api_secret'])
 auth.set_access_token(api_key['access_token'], api_key['access_token_secret'])
 api = tweepy.API(auth, wait_on_rate_limit = True, wait_on_rate_limit_notify = True)
@@ -81,7 +76,7 @@ graph_data_db = db['graph']
 g_data = {}
 g_data['num_followers'] = len(followers)
 g_data['num_following'] = len(following)
-g_data['indeg_outdeg_ratio'] = float(len(followers))/len(following)
+g_data['indeg_outdeg_ratio'] = float(len(followers))/(len(following))
 g_data['rt_count'] = rt_count
 g_data['fv_count'] = fv_count
 graph_data_db.insert(json.loads(json.dumps(g_data)))
@@ -110,3 +105,34 @@ plotLine(day, num_following, day, 'Days elapsed', 'Number of following', 'Follow
 plotLine(day, indeg_outdeg_ratio, day, 'Days elapsed', 'Indegree/Outdegree ratio', 'In/Out', 'In_Out')
 plotLine(day, rt_count, day, 'Days elapsed', 'Number of RTs on all tweets', 'Number of RTs', 'RTs')
 plotLine(day, fv_count, day, 'Days elapsed', 'Number of favorites', 'No of fv', 'fvs')
+
+# Plot followers/ following
+plt.figure(figsize = (8,8))
+plt.xticks(day, day)
+plt.xlabel('Days elapsed')
+plt.ylabel('Count')
+plt.plot(day, num_following, label = 'Following', linestyle = '-', marker = 'o')
+plt.plot(day, num_followers, label = 'Followers', linestyle = '-', marker = '^')
+plt.legend()
+plt.title('Followers/ Following')
+plt.savefig('graphs/FollowersFollowing')
+
+# Plot indegree/outdegree
+plt.figure(figsize = (8,8))
+plt.xticks(day, day)
+plt.xlabel('Days elapsed')
+plt.ylabel('Ratio')
+plt.plot(day ,indeg_outdeg_ratio)
+plt.title('Indegree/Outdegree')
+plt.savefig('graphs/IndegreebyOutdeegree')
+
+# Plot RT/ Fv
+plt.figure(figsize = (8,8))
+plt.xticks(day, day)
+plt.xlabel('Days elapsed')
+plt.ylabel('Count')
+plt.plot(day, rt_count, label = 'Retweets', linestyle = '-', marker = 'o')
+plt.plot(day, fv_count, label = 'Favorited count', linestyle = '-', marker = '^')
+plt.legend()
+plt.title('RetweetedFavorited')
+plt.savefig('graphs/RT_Fv')
