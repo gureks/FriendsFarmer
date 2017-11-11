@@ -1,4 +1,7 @@
-import tweepy, json, sys, string, csv
+import csv
+import json
+import sys
+import tweepy
 from pymongo import MongoClient
 import matplotlib.pyplot as plt
 from environment import api_key, user_to_collect
@@ -10,7 +13,7 @@ def plotLine(keys, values, x, xlabel, ylabel, title, filename, rotation = 0):
 	plt.ylabel(ylabel)
 	plt.plot(x ,values)
 	plt.title(title)
-	plt.savefig("graphs/" + filename)
+	plt.savefig('graphs/' + filename)
 
 auth = tweepy.OAuthHandler(api_key['api_key'], api_key['api_secret'])
 auth.set_access_token(api_key['access_token'], api_key['access_token_secret'])
@@ -25,13 +28,13 @@ usr = user_to_collect
 followers = []
 for page in tweepy.Cursor(api.followers, screen_name=usr).pages():
 	for user in page:
-		print("Follower - " + user.screen_name)
+		print('Follower - ' + user.screen_name)
 		followers.append(user.screen_name)
 
 following = []
 for page in tweepy.Cursor(api.friends, screen_name=usr).pages():
 	for user in page:
-		print("Following - " + user.screen_name)
+		print('Following - ' + user.screen_name)
 		following.append(user.screen_name)
 
 u = [usr]
@@ -39,13 +42,13 @@ nodes = set(followers + following + u)
 print(len(nodes))
 
 with open('graphs/nodes.csv', 'w') as csvfile:
-    fieldnames = ['id', 'label']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-    i = 1
-    for n in nodes:
-    	writer.writerow({'id' : i, 'label': n})
-    	i += 1
+	fieldnames = ['id', 'label']
+	writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+	writer.writeheader()
+	i = 1
+	for n in nodes:
+		writer.writerow({'id' : i, 'label': n})
+		i += 1
 
 with open('graphs/edges.csv', 'w') as csvfile:
 	fieldnames = ['source', 'target']
@@ -66,7 +69,7 @@ while tweets:
 			rt_count += tweet.retweet_count
 		fv_count += tweet.favorite_count
 	last_id = tweets[len(tweets)-1].id - 1
-	print("Last ID - " + str(last_id))
+	print('Last ID - ' + str(last_id))
 	tweets = api.user_timeline(screen_name = usr, count=200, max_id = last_id)
 
 client = MongoClient()

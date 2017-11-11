@@ -1,8 +1,8 @@
-import json, sys, string, time
+import json
+import time
 from twython import Twython
 from pymongo import MongoClient
 from environment import api_key, user_to_collect
-import numpy as np
 import matplotlib.pyplot as plt
 
 connection = MongoClient()
@@ -30,7 +30,7 @@ def collect_data():
 		ctr += 1
 
 		if ctr%15 == 0:
-			print ("Sleeping for 1000 seconds")
+			print ('Sleeping for 1000 seconds')
 			time.sleep(1000)
 
 		cursor = followers_list['next_cursor']

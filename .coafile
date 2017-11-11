@@ -1,0 +1,11 @@
+[Default]
+files = **.py
+
+[python]
+bears = SpaceConsistencyBear, QuotesBear, PyUnusedCodeBear
+language = Python
+preferred_quotation = '
+max_line_length = 80
+use_spaces = False
+remove_all_unused_imports = true
+default_actions = *: ApplyPatchAction
