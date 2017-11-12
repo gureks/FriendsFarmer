@@ -98,7 +98,7 @@ def friends_to_unfollow():
 	for follower in followers:
 		followers_usernames.append(follower['username'])
 
-	c = 0
+	c = 1
 	for friend in following:
 		user_name = friend['username']
 		print(user_name)
@@ -106,7 +106,24 @@ def friends_to_unfollow():
 		if user_name in followers_usernames:
 			continue
 		else:
-			result = twitter.show_user(user_id=friend['_id'], include_entities=True)
+			if c%850==0:
+				append_to_db(unfollow, 'users_to_unfollow')
+				print ('Sleeping for 1000 seconds')
+				time.sleep(1000)
+			try:
+				result = twitter.show_user(user_id=friend['_id'], include_entities=True)
+				c += 1
+			except Exception as e:
+				print (user_name + str(e))
+				unfollow.append({
+					'_id': friend['_id'],
+					'username':	friend['username']
+				})
+				continue
+			else:
+				pass
+			finally:
+				pass
 
 			if result['protected']:
 				print('Private User - ' + user_name)
@@ -114,7 +131,6 @@ def friends_to_unfollow():
 					'_id': friend['_id'],
 					'username':	friend['username']
 				})
-				c += 1
 				continue
 
 			if not result['statuses_count']:
@@ -123,7 +139,6 @@ def friends_to_unfollow():
 					'_id': friend['_id'],
 					'username':	friend['username']
 				})
-				c += 1
 				continue
 
 			if 'status' not in result.keys():
@@ -132,7 +147,6 @@ def friends_to_unfollow():
 					'_id': friend['_id'],
 					'username':	friend['username']
 				})
-				c += 1
 				continue
 
 			latest_tweet = result['status']['created_at']
@@ -156,10 +170,6 @@ def friends_to_unfollow():
 					'username':	friend['username']
 				})
 
-			c += 1
-			if c%900==0:
-				print ('Sleeping for 1000 seconds')
-				time.sleep(1000)
 	append_to_db(unfollow, 'users_to_unfollow')
 
 def unfollow_users():
@@ -173,7 +183,6 @@ def unfollow_users():
 		except Exception as e:
 			print(e)
 			print("Can't unfollow " + user['username'])
-			pass
 		else:
 			pass
 		finally:
@@ -188,7 +197,6 @@ def unfollow_users():
 			elif count%10==0:
 				print('Sleeping 250 seconds')
 				time.sleep(250)
-			pass
 	users.close()
 
 if __name__ == '__main__':
