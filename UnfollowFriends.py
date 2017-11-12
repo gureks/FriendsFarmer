@@ -171,10 +171,11 @@ def unfollow_users():
 			print('Unfollowed ' + user['username'])
 			count += 1
 		except Exception as e:
+			print(e)
 			print("Can't unfollow " + user['username'])
-			continue
+			pass
 		else:
-			continue
+			pass
 		finally:
 			db['users_to_unfollow'].remove({'_id':user['_id']})
 			db['following'].remove({'_id':user['_id']})
@@ -187,6 +188,7 @@ def unfollow_users():
 			elif count%10==0:
 				print('Sleeping 250 seconds')
 				time.sleep(250)
+			pass
 	users.close()
 
 if __name__ == '__main__':
