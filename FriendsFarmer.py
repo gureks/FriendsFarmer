@@ -118,10 +118,6 @@ def collect_followers_of_followers():
 													include_user_entities=False,
 													cursor=cursor)
 		ctr += 1
-		# TODO : Fix get_followers_list[2]. Adjust according to rate limit.
-		if ctr%15 == 0:
-			print('Sleeping 1000...')
-			time.sleep(1000)
 		followers_of_follower.extend(followers_list['users'])
 		print(follower['screen_name'] + ' - ' + str(len(followers_of_follower)) + ' - ' + str(ctr))
 		for i in followers_of_follower:
@@ -129,6 +125,10 @@ def collect_followers_of_followers():
 							'username':	i['screen_name'],
 							'_id': i['id_str']
 						})
+		if ctr%15 == 0:
+			append_to_db(users)
+			print('Sleeping 1000...')
+			time.sleep(1000)
 	append_to_db(users)
 
 def follow_filter():
