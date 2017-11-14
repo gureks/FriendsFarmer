@@ -13,7 +13,7 @@ def plotLine(keys, values, x, xlabel, ylabel, title, filename, rotation = 0):
 	plt.ylabel(ylabel)
 	plt.plot(x ,values)
 	plt.title(title)
-	plt.savefig('graphs/' + filename)
+	plt.savefig('../graphs/' + user_to_collect + '/' + filename)
 
 auth = tweepy.OAuthHandler(api_key['api_key'], api_key['api_secret'])
 auth.set_access_token(api_key['access_token'], api_key['access_token_secret'])
@@ -41,7 +41,7 @@ u = [usr]
 nodes = set(followers + following + u)
 print(len(nodes))
 
-with open('graphs/nodes.csv', 'w') as csvfile:
+with open('graphs/' + user_to_collect + 'nodes.csv', 'w') as csvfile:
 	fieldnames = ['id', 'label']
 	writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 	writer.writeheader()
@@ -50,7 +50,7 @@ with open('graphs/nodes.csv', 'w') as csvfile:
 		writer.writerow({'id' : i, 'label': n})
 		i += 1
 
-with open('graphs/edges.csv', 'w') as csvfile:
+with open('graphs/' + user_to_collect + 'edges.csv', 'w') as csvfile:
 	fieldnames = ['source', 'target']
 	writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 	writer.writeheader()
@@ -103,6 +103,9 @@ for d in graph_cursor:
 	day.append(i)
 	i += 1
 
+if not os.path.exists('../graphs/' + user_to_collect):
+	os.makedirs('../graphs/' + user_to_collect)
+
 plotLine(day, num_followers, day, 'Days elapsed', 'Number of followers', 'Followers', 'Followers')
 plotLine(day, num_following, day, 'Days elapsed', 'Number of following', 'Following', 'Following')
 plotLine(day, indeg_outdeg_ratio, day, 'Days elapsed', 'Indegree/Outdegree ratio', 'In/Out', 'In_Out')
@@ -118,7 +121,7 @@ plt.plot(day, num_following, label = 'Following', linestyle = '-', marker = 'o')
 plt.plot(day, num_followers, label = 'Followers', linestyle = '-', marker = '^')
 plt.legend()
 plt.title('Followers/ Following')
-plt.savefig('graphs/FollowersFollowing')
+plt.savefig('../graphs/' + user_to_collect + '/FollowersFollowing')
 
 # Plot indegree/outdegree
 plt.figure(figsize = (8,8))
@@ -127,7 +130,7 @@ plt.xlabel('Days elapsed')
 plt.ylabel('Ratio')
 plt.plot(day ,indeg_outdeg_ratio)
 plt.title('Indegree/Outdegree')
-plt.savefig('graphs/IndegreebyOutdeegree')
+plt.savefig('../graphs/' + user_to_collect + '/IndegreebyOutdeegree')
 
 # Plot RT/ Fv
 plt.figure(figsize = (8,8))
@@ -138,4 +141,4 @@ plt.plot(day, rt_count, label = 'Retweets', linestyle = '-', marker = 'o')
 plt.plot(day, fv_count, label = 'Favorited count', linestyle = '-', marker = '^')
 plt.legend()
 plt.title('RetweetedFavorited')
-plt.savefig('graphs/RT_Fv')
+plt.savefig('../graphs/' + user_to_collect + '/RT_Fv')

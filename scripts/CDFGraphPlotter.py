@@ -1,5 +1,6 @@
 import json
 import time
+import os
 from twython import Twython
 from pymongo import MongoClient
 from environment import api_key, user_to_collect
@@ -59,7 +60,9 @@ def make_cdf():
 	plt.xlabel('In/Out')
 	plt.ylabel('CDF of Followers')
 
-	plt.savefig('graphs/CDFGraph')
+	if not os.path.exists('../graphs/' + user_to_collect):
+		os.makedirs('../graphs/' + user_to_collect)
+	plt.savefig('../graphs/' + user_to_collect + '/CDFGraph')
 
 if __name__ == '__main__':
 	collect_data()
